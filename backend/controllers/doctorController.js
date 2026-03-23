@@ -323,8 +323,9 @@ export async function doctorLogin(req, res) {
     const doc = await Doctor.findOne({ email: email.toLowerCase() }).select("+password");
     if (!doc) return res.status(401).json({ success: false, message: "Invalid credentials" });
 
-    // Direct comparison (NO bcrypt)
-    if (doc.password !== password) return res.status(401).json({ success: false, message: "Invalid credentials" });
+    // Secure comparison using bcrypt
+    const isMatch = await doc.comparePassword(password);
+    if (!isMatch) return res.status(401).json({ success: false, message: "Invalid credentials" });
 
     const secret = process.env.JWT_SECRET;
     if (!secret) return res.status(500).json({ success: false, message: "JWT_SECRET not configured" });

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 const doctorSchema = new mongoose.Schema(
   {
@@ -42,6 +43,23 @@ const doctorSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// 🔒 Hash password before saving
+doctorSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
+// 🔒 Compare password method
+doctorSchema.methods.comparePassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
 
 // text search
 doctorSchema.index({ name: "text", specialization: "text" });

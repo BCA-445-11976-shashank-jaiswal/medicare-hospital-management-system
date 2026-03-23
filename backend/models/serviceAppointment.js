@@ -120,6 +120,7 @@ const serviceAppointmentSchema = new mongoose.Schema(
    ========================= */
 serviceAppointmentSchema.index({ date: 1, status: 1 });
 serviceAppointmentSchema.index({ serviceId: 1 });
+serviceAppointmentSchema.index({ serviceId: 1, date: 1, hour: 1, minute: 1, ampm: 1 });
 
 const ServiceAppointment =
   mongoose.models.ServiceAppointment ||

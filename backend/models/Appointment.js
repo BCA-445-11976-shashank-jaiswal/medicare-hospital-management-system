@@ -82,6 +82,11 @@ const appointmentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// 🚀 Performance: Optimize common queries
+appointmentSchema.index({ status: 1 });
+appointmentSchema.index({ date: 1, time: 1 });
+appointmentSchema.index({ doctorId: 1, date: 1, time: 1 }); // for slot availability checks
+
 const Appointment =
   mongoose.models.Appointment ||
   mongoose.model("Appointment", appointmentSchema);

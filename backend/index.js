@@ -16,6 +16,15 @@ import { connectDB } from './config/db.js';
 
 // ⭐ ADD CLERK MIDDLEWARE
 import { clerkMiddleware } from "@clerk/express";
+import helmet from "helmet";
+import compression from "compression";
+import rateLimit from "express-rate-limit";
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP, please try again after 15 minutes",
+});
 import appointmentRouter from './routes/appointmentRouter.js';
 import doctorRouter from './routes/doctorRouter.js';
 import serviceRouter from './routes/serviceRoutes.js';
@@ -59,6 +68,11 @@ app.use(
 );
 
 
+
+app.use(helmet());
+app.use(compression());
+// Apply rate limiting to all requests (except maybe internal ones)
+app.use("/api/", limiter);
 
 // ⭐ Use Clerk middleware globally (does NOT protect routes)
 app.use(clerkMiddleware());
