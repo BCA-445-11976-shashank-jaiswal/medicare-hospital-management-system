@@ -143,9 +143,17 @@ export const bannerStyles = {
   emergencyButtonIcon: "w-4 h-4 sm:w-5 sm:h-5",
   
   // Image section
-  imageContainer: "relative w-full max-w-md mx-auto",
-  imageFrame: "relative transform transition-transform duration-500 overflow-hidden rounded-xl",
-  image: "w-full object-cover h-56 sm:h-72 md:h-96 lg:h-[360px] xl:h-[420px] transition-transform duration-700"
+  imageContainer: "relative w-full lg:w-[110%] -mr-10 lg:-mr-20",
+  imageFrame: "relative transform transition-transform duration-500 overflow-hidden",
+  image: "w-full object-contain h-auto max-h-[500px] lg:max-h-[600px] transition-transform duration-700",
+
+  // Feature Cards Section (New)
+  featureCardsSection: "grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 lg:-mt-20 relative z-30",
+  featureCard: "bg-white/80 backdrop-blur-md p-8 rounded-3xl border border-emerald-100 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group",
+  featureCardIconContainer: "w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-emerald-500 transition-colors duration-300",
+  featureCardIcon: "w-8 h-8 text-emerald-600 group-hover:text-white transition-colors duration-300",
+  featureCardTitle: "text-xl font-bold text-gray-800 mb-2",
+  featureCardDesc: "text-gray-600 text-sm leading-relaxed",
 };
 
 export const commonStyles = {
@@ -629,10 +637,10 @@ export const navbarStyles = {
   rightContainer: "flex items-center gap-3",
   
   // Signed out buttons
-  doctorAdminButton: "btn-add hidden lg:inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-semibold transition-transform duration-200",
+  doctorAdminButton: "hidden lg:inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-50 transition-all duration-200",
   doctorAdminIcon: "w-4 h-4",
   doctorAdminText: "hidden lg:text-xs lg:whitespace-nowrap sm:inline-block",
-  loginButton: "btn-login hidden lg:flex lg:text-sm items-center gap-2 bg-linear-to-r from-emerald-400 to-green-600 text-white px-6 py-2.5 rounded-full font-semibold hover:shadow-xl transition-all duration-300 cursor-default",
+  loginButton: "btn-login hidden lg:flex lg:text-sm items-center gap-2 bg-emerald-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-emerald-700 hover:shadow-xl transition-all duration-300",
   loginIcon: "w-4 h-4",
   
   // Mobile toggle

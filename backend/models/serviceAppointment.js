@@ -41,6 +41,7 @@ const serviceAppointmentSchema = new mongoose.Schema(
       enum: ["Male", "Female", "Other", ""],
       default: "",
     },
+    email: { type: String, trim: true, lowercase: true },
 
     /* =========================
        Service Info

@@ -15,7 +15,7 @@ import {
 
 import doctorAuth from "../middlewares/doctorAuth.js";
 
-const upload = multer({ dest: "/tmp" });
+const upload = multer({ storage: multer.memoryStorage() });
 
 const doctorRouter = express.Router();
 

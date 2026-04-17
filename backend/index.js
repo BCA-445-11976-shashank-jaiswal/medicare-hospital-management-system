@@ -1,4 +1,6 @@
 import 'dotenv/config';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import cors from 'cors';
 import express from 'express';
 
@@ -29,6 +31,7 @@ import appointmentRouter from './routes/appointmentRouter.js';
 import doctorRouter from './routes/doctorRouter.js';
 import serviceRouter from './routes/serviceRoutes.js';
 import serviceAppointmentRouter from './routes/serviceAppointmentRouter.js';
+import contactRouter from './routes/contactRouter.js';
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -62,7 +65,7 @@ app.use(
       return callback(new Error("Not allowed by CORS"));
     },
     credentials: true, // ✅ REQUIRED for cookies / Clerk
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
@@ -87,11 +90,15 @@ connectDB();
 
 
 
+import adminRouter from './routes/adminRouter.js';
+
 // Routes
 app.use("/api/appointments", appointmentRouter);
 app.use("/api/doctors", doctorRouter);
 app.use("/api/services", serviceRouter);
 app.use("/api/service-appointments", serviceAppointmentRouter);
+app.use("/api/admin", adminRouter);
+app.use("/api/contact", contactRouter);
 
 // Test route
 app.get('/', (req, res) => {

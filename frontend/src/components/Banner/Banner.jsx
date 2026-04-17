@@ -1,15 +1,10 @@
 import React from "react";
 import {
-  Calendar,
   Clock,
-  Stethoscope,
-  Phone,
-  Star,
-  Users,
-  Ribbon,
-  ShieldUser,
+  PhoneCall,
+  UserCheck
 } from "lucide-react";
-import banner from "../../assets/CannerImg.png";
+import heroImg from "../../assets/healthcare_team_hero.png";
 import { useNavigate } from "react-router-dom";
 import { bannerStyles } from "../../assets/dummyStyles";
 
@@ -17,136 +12,90 @@ const Banner = () => {
   const navigate = useNavigate();
   return (
     <div className={bannerStyles.bannerContainer}>
-      {/* Main Banner Container with Animated Border */}
-      <div className={bannerStyles.mainContainer}>
-        {/* Auto-Animated Border Outline */}
-        <div className={bannerStyles.borderOutline}>
-          {/* Outer animated band (keeps your original class names to avoid style regressions) */}
-          <div className={bannerStyles.outerAnimatedBand}></div>
-          {/* Inner white border to separate content */}
-          <div className={bannerStyles.innerWhiteBorder}></div>
-        </div>
-
+      {/* Main Banner Container */}
+      <div className="relative overflow-visible">
         {/* Content Container */}
         <div className={bannerStyles.contentContainer}>
           <div className={bannerStyles.flexContainer}>
             {/* Left Content Section */}
             <div className={bannerStyles.leftContent}>
-              {/* Header with Badge */}
-              <div className={bannerStyles.headerBadgeContainer}>
-                <div className={bannerStyles.stethoscopeContainer}>
-                  <div className={bannerStyles.stethoscopeInner}>
-                    <Stethoscope className={bannerStyles.stethoscopeIcon} />
-                  </div>
-                </div>
-
-                <div className={bannerStyles.titleContainer}>
-                  {/* Responsive heading sizes: smaller on phones, same on desktop */}
-                  <h1 className={bannerStyles.title}>
-                    Medi
-                    <span className={bannerStyles.titleGradient}>Care+</span>
-                  </h1>
-
-                  {/* Stars */}
-                  <div className={bannerStyles.starsContainer}>
-                    <div className={bannerStyles.starsInner}>
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star key={star} className={bannerStyles.starIcon} />
-                      ))}
-                    </div>
-                  </div>
-                </div>
+              {/* Tagline / Subheading */}
+              <div className="flex items-center gap-2 mb-4 justify-center lg:justify-start">
+                  <span className="w-10 h-[2px] bg-emerald-500"></span>
+                  <span className="text-emerald-600 font-semibold uppercase tracking-widest text-sm">Expert care from trusted professionals</span>
               </div>
 
-              {/* Tagline */}
-              <p className={bannerStyles.tagline}>
-                Premium Healthcare
-                <span className={`block ${bannerStyles.taglineHighlight}`}>
-                  At Your Fingertips
-                </span>
-              </p>
-
-              {/* Features Grid */}
-              <div className={bannerStyles.featuresGrid}>
-                <div
-                  className={`${bannerStyles.featureItem} ${bannerStyles.featureBorderGreen}`}
-                >
-                  <Ribbon className={bannerStyles.featureIcon} />
-                  <span className={bannerStyles.featureText}>
-                    Certified Specialists
-                  </span>
-                </div>
-                <div
-                  className={`${bannerStyles.featureItem} ${bannerStyles.featureBorderBlue}`}
-                >
-                  <Clock className={bannerStyles.featureIcon} />
-                  <span className={bannerStyles.featureText}>
-                    24/7 Availability
-                  </span>
-                </div>
-                <div
-                  className={`${bannerStyles.featureItem} ${bannerStyles.featureBorderEmerald}`}
-                >
-                  <ShieldUser className={bannerStyles.featureIcon} />
-                  <span className={bannerStyles.featureText}>
-                    Safe &amp; Secure
-                  </span>
-                </div>
-                <div
-                  className={`${bannerStyles.featureItem} ${bannerStyles.featureBorderPurple}`}
-                >
-                  <Users className={bannerStyles.featureIcon} />
-                  <span className={bannerStyles.featureText}>500+ Doctors</span>
-                </div>
-              </div>
+              {/* Main Heading */}
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 leading-tight mb-6">
+                Your Health <br />
+                is <span className="text-emerald-600">Our Priority</span>
+              </h1>
 
               {/* CTA Buttons */}
-              <div className={bannerStyles.ctaButtonsContainer}>
+              <div className="flex flex-col sm:flex-row gap-4 mb-12 justify-center lg:justify-start">
                 <button
                   onClick={() => navigate("/doctors")}
-                  aria-label="Book Appointment"
-                  className={bannerStyles.bookButton}
+                  className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg shadow-emerald-200 transition-all transform hover:-translate-y-1"
                 >
-                  <div className={bannerStyles.bookButtonOverlay}></div>
-                  <div className={bannerStyles.bookButtonContent}>
-                    <Calendar className={bannerStyles.bookButtonIcon} />
-                    <span>Book Appointment Now</span>
-                  </div>
+                  Book Appointment
                 </button>
-
                 <button
-                  onClick={() => (window.location.href = "tel:1234567890")}
-                  aria-label="Emergency Call"
-                  className={bannerStyles.emergencyButton}
+                  onClick={() => navigate("/contact")}
+                  className="border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50 px-8 py-4 rounded-full font-bold text-lg transition-all transform hover:-translate-y-1"
                 >
-                  <div className={bannerStyles.emergencyButtonContent}>
-                    <Phone className={bannerStyles.emergencyButtonIcon} />
-                    <span>Emergency Call</span>
-                  </div>
+                  Contact Us
                 </button>
               </div>
             </div>
 
             {/* Right Image Section */}
             <div className={bannerStyles.rightImageSection}>
-              {/* Main Image Container */}
               <div className={bannerStyles.imageContainer}>
-                {/* Main Image Frame */}
-                <div className={bannerStyles.imageFrame}>
-                  {/* Controlled heights for small / medium / large screens so the image looks consistent */}
-                  <img
-                    src={banner}
-                    alt="Professional Healthcare Team"
-                    className={bannerStyles.image}
-                  />
-                </div>
+                <img
+                  src={heroImg}
+                  alt="Professional Healthcare Team"
+                  className={bannerStyles.image}
+                />
               </div>
             </div>
           </div>
+
+          {/* Feature Cards Section */}
+          <div className={bannerStyles.featureCardsSection}>
+            <div className={bannerStyles.featureCard}>
+              <div className={bannerStyles.featureCardIconContainer}>
+                <Clock className={bannerStyles.featureCardIcon} />
+              </div>
+              <h3 className={bannerStyles.featureCardTitle}>24/7 Support</h3>
+              <p className={bannerStyles.featureCardDesc}>
+                Round-the-clock medical assistance for all your healthcare needs, whenever you need it.
+              </p>
+            </div>
+
+            <div className={bannerStyles.featureCard}>
+              <div className={bannerStyles.featureCardIconContainer}>
+                <UserCheck className={bannerStyles.featureCardIcon} />
+              </div>
+              <h3 className={bannerStyles.featureCardTitle}>Qualified Doctors</h3>
+              <p className={bannerStyles.featureCardDesc}>
+                Consult with highly experienced and certified medical professionals across all specialties.
+              </p>
+            </div>
+
+            <div className={bannerStyles.featureCard}>
+              <div className={bannerStyles.featureCardIconContainer}>
+                <PhoneCall className={bannerStyles.featureCardIcon} />
+              </div>
+              <h3 className={bannerStyles.featureCardTitle}>Emergency Care</h3>
+              <p className={bannerStyles.featureCardDesc}>
+                Rapid response and specialized care for medical emergencies to ensure your safety.
+              </p>
+            </div>
+          </div>
         </div>
-      </div>{" "}
-      {/* end main container */}
+      </div>
     </div>
-  )
-}
+  );
+};
+
 export default Banner;

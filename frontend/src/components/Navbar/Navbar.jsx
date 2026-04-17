@@ -97,7 +97,7 @@ export default function Navbar() {
                 <div className={navbarStyles.logoImageWrapper}>
                   <img
                     src={logo}
-                    alt="MedBook logo"
+                    alt="MediCare Logo"
                     className={navbarStyles.logoImage}
                   />
                 </div>

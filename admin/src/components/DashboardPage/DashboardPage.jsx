@@ -7,7 +7,10 @@ import {
   CheckCircle,
   XCircle,
   UserRoundCheck,
+  FileDown,
 } from "lucide-react";
+import axios from "axios";
+import toast from "react-hot-toast";
 import { dashboardStyles as s } from "../../assets/dummyStyles";
 
 /* ----------------------
@@ -102,6 +105,36 @@ export default function DashboardPage() {
 
   const [query, setQuery] = useState("");
   const [showAll, setShowAll] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
+
+  const handleExportExcel = async () => {
+    setExportLoading(true);
+    try {
+      const response = await axios({
+        url: `${API_BASE}/api/admin/export-report`,
+        method: "GET",
+        responseType: "blob", // Important for downloading files
+      });
+
+      // Create a link element, hide it, and click it to trigger download
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "hospital-report.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      
+      // Cleanup
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      toast.success("Excel report downloaded successfully!");
+    } catch (err) {
+      console.error("Export Error:", err);
+      toast.error("Failed to download Excel report");
+    } finally {
+      setExportLoading(false);
+    }
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -238,6 +271,15 @@ export default function DashboardPage() {
               Overview of doctors & appointments
             </p>
           </div>
+
+          <button 
+            onClick={handleExportExcel}
+            disabled={exportLoading}
+            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-full shadow-lg hover:bg-emerald-700 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <FileDown size={20} />
+            {exportLoading ? "Exporting..." : "Export Report"}
+          </button>
         </div>
 
         {/* Stats Section */}

@@ -199,6 +199,12 @@ export default function DoctorDetail() {
     setFormData((prev) => ({ ...prev, mobile: digits }));
   };
 
+  const handleNameChange = (value) => {
+    // Allow only alphabets and spaces
+    const cleanName = value.replace(/[^a-zA-Z\s]/g, "");
+    setFormData((prev) => ({ ...prev, name: cleanName }));
+  };
+
   const handleBooking = async () => {
     if (isSubmitting) return;
 
@@ -599,9 +605,7 @@ export default function DoctorDetail() {
                       placeholder="Full Name"
                       className={doctorDetailStyles.formInput}
                       value={formData.name}
-                      onChange={(e) =>
-                        setFormData({ ...formData, name: e.target.value })
-                      }
+                      onChange={(e) => handleNameChange(e.target.value)}
                     />
 
                     <input

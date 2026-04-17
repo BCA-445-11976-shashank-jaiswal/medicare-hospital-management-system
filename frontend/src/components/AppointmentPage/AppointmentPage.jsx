@@ -9,6 +9,7 @@ import {
   CheckCircle,
   XCircle,
   Bell,
+  Download,
 } from "lucide-react";
 import { useAuth, useUser } from "@clerk/clerk-react";
 import {
@@ -225,6 +226,31 @@ export default function AppointmentPage() {
     }
   }, [isLoaded, getToken, user]);
 
+  /* -------------------- Handle Download -------------------- */
+  const handleDownloadReceipt = async (id) => {
+    try {
+      const token = await getToken();
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      
+      const response = await API.get(`/api/appointments/${id}/receipt`, {
+        headers,
+        responseType: "blob",
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `Appointment_Receipt_${id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      toast.success("Receipt downloaded successfully!");
+    } catch (err) {
+      console.error("Download Error:", err);
+      toast.error("Failed to download receipt.");
+    }
+  };
+
   /* -------------------- Combined loader -------------------- */
   useEffect(() => {
     loadDoctorAppointments();
@@ -431,6 +457,16 @@ export default function AppointmentPage() {
                   </span>
                 </div>
               ) : null}
+
+              {/* Download Receipt Button */}
+              {(item.status === "Confirmed" || item.status === "Completed") && (
+                <button
+                  onClick={() => handleDownloadReceipt(item.id)}
+                  className="mt-4 w-full flex items-center justify-center gap-2 py-2.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200 hover:bg-emerald-100 transition-all active:scale-95"
+                >
+                  <Download className="w-4 h-4 cursor-pointer" /> Download Receipt
+                </button>
+              )}
             </div>
           ))}
         </div>

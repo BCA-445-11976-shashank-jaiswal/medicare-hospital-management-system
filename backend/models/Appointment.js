@@ -16,6 +16,7 @@ const appointmentSchema = new mongoose.Schema(
     mobile: { type: String, required: true, trim: true },
     age: { type: Number, default: null },
     gender: { type: String, default: "" },
+    email: { type: String, trim: true, lowercase: true },
 
     /* =========================
        Doctor Info

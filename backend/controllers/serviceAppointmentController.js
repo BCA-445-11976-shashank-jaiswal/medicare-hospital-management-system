@@ -1,6 +1,7 @@
 import ServiceAppointment from "../models/serviceAppointment.js";
 import Service from "../models/Service.js";
 import { getAuth } from "@clerk/express";
+import { sendAppointmentConfirmation } from "../utils/notificationHelper.js";
 
 const safeNumber = (val) => {
   if (val === undefined || val === null || val === "") return null;
@@ -39,15 +40,18 @@ const buildFrontendBase = (req) => {
 
 function resolveClerkUserId(req) {
   try {
-    const auth = req.auth || {};
-    const candidate = auth?.userId || auth?.user_id || auth?.user?.id || req.user?.id || null;
-    if (candidate) return candidate;
-    try {
-      const serverAuth = getAuth ? getAuth(req) : null;
-      return serverAuth?.userId || null;
-    } catch (e) {
-      return null;
+    let candidate = null;
+    if (typeof getAuth === 'function') {
+      try {
+        const serverAuth = getAuth(req);
+        candidate = serverAuth?.userId || null;
+      } catch (e) {}
     }
+    
+    if (candidate) return candidate;
+
+    candidate = req?.user?.id || null;
+    return candidate;
   } catch (e) {
     return null;
   }
@@ -81,6 +85,12 @@ export const createServiceAppointment = async (req, res) => {
 
     if (!serviceId) return res.status(400).json({ success: false, message: "serviceId is required" });
     if (!patientName || !String(patientName).trim()) return res.status(400).json({ success: false, message: "patientName is required" });
+
+    // ✅ Name Validation: Only alphabets and spaces
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!nameRegex.test(patientName)) {
+      return res.status(400).json({ success: false, message: "Patient name should only contain alphabets" });
+    }
     if (!mobile || !String(mobile).trim()) return res.status(400).json({ success: false, message: "mobile is required" });
     if (!date || !String(date).trim()) return res.status(400).json({ success: false, message: "date is required (YYYY-MM-DD)" });
 
@@ -142,6 +152,7 @@ export const createServiceAppointment = async (req, res) => {
       ampm: finalAmpm,
       fees: numericAmount,
       createdBy: clerkUserId,
+      email: email || "",
       notes: notes || "",
     };
 
@@ -150,6 +161,18 @@ export const createServiceAppointment = async (req, res) => {
       ...base,
       status: "Confirmed",
     });
+
+    // Trigger Notification
+    sendAppointmentConfirmation({
+      patientName: String(patientName).trim(),
+      patientEmail: email,
+      patientPhone: String(mobile).trim(),
+      serviceName: resolvedServiceName,
+      date: String(date),
+      time: `${finalHour}:${String(finalMinute).padStart(2, "0")} ${finalAmpm}`,
+      type: 'service'
+    }).catch(err => console.error("Notification trigger error:", err));
+
     return res.status(201).json({ success: true, appointment: created });
   } catch (err) {
     console.error("createServiceAppointment unexpected:", err);

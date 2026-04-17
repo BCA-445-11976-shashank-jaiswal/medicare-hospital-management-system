@@ -8,7 +8,11 @@ import {
   User,
   SendHorizontal,
   Stethoscope,
+  Loader2,
 } from "lucide-react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import SuccessModal from "./SuccessModal";
 import { contactPageStyles } from "../../assets/dummyStyles";
 
 export default function ContactPage() {
@@ -23,7 +27,10 @@ export default function ContactPage() {
 
   const [form, setForm] = useState(initial);
   const [errors, setErrors] = useState({});
-  const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const API_BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:4000";
 
   const departments = [
     "General Physician",
@@ -111,23 +118,28 @@ export default function ContactPage() {
     }
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     if (!validate()) return;
 
-    const text = `*Contact Request*\nName: ${form.name}\nEmail: ${
-      form.email
-    }\nPhone: ${form.phone}\nDepartment: ${
-      form.department || "N/A"
-    }\nService: ${form.service || "N/A"}\nMessage: ${form.message}`;
+    setLoading(true);
+    try {
+      const response = await axios.post(`${API_BASE}/api/contact`, form);
 
-    const url = "";
-    window.open(url, "_blank");
-
-    setForm(initial);
-    setErrors({});
-    setSent(true);
-    setTimeout(() => setSent(false), 4000);
+      if (response.data.success) {
+        setShowSuccess(true);
+        setForm(initial);
+        setErrors({});
+      } else {
+        toast.error(response.data.message || "Failed to send message.");
+      }
+    } catch (error) {
+      console.error("Contact Form error:", error);
+      const errorMsg = error.response?.data?.message || "Something went wrong. Please try again.";
+      toast.error(errorMsg);
+    } finally {
+      setLoading(false);
+    }
   }
 
   // show department-specific services on tablet/desktop; generic on phones if no dept selected
@@ -149,8 +161,7 @@ export default function ContactPage() {
             Contact Our Clinic
           </h2>
           <p className={contactPageStyles.formSubtitle}>
-            Fill the form — we'll open WhatsApp so you can connect with us
-            instantly.
+            Fill the form — our team will get back to you shortly via email.
           </p>
 
           <form onSubmit={handleSubmit} className={contactPageStyles.formSpace}>
@@ -287,16 +298,21 @@ export default function ContactPage() {
               <button
                 type="submit"
                 className={contactPageStyles.button}
-                aria-label="Send via WhatsApp"
+                aria-label="Send via Email"
+                disabled={loading}
               >
-                <SendHorizontal size={18} /> <span>Send via WhatsApp</span>
+                {loading ? (
+                  <>
+                    <Loader2 className="animate-spin" size={18} />
+                    <span>Sending...</span>
+                  </>
+                ) : (
+                  <>
+                    <SendHorizontal size={18} />
+                    <span>Send Message</span>
+                  </>
+                )}
               </button>
-
-              {sent && (
-                <p className={contactPageStyles.sentMessage}>
-                  Opening WhatsApp and clearing form...
-                </p>
-              )}
             </div>
           </form>
         </div>
@@ -336,6 +352,13 @@ export default function ContactPage() {
           </div>
         </div>
       </div>
+
+      {/* Success Modal Overlay */}
+      <SuccessModal 
+        isOpen={showSuccess} 
+        onClose={() => setShowSuccess(false)}
+        message="Your message has been sent successfully. Check your email for confirmation!"
+      />
 
       {/* small animation keyframes */}
       <style>{contactPageStyles.animationKeyframes}</style>

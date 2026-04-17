@@ -19,6 +19,7 @@ import {
   getAppointmentsByPatient,
   getAppointmentsByDoctor,
   getRegisteredUserCount,
+  downloadAppointmentReceipt,
 } from "../controllers/appointmentController.js";
 import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 
@@ -59,6 +60,7 @@ appointmentRouter.get(
 );
 
 appointmentRouter.post("/:id/cancel", cancelAppointment);
+appointmentRouter.get("/:id/receipt", checkAuth, downloadAppointmentReceipt);
 appointmentRouter.get("/paitents/count",getRegisteredUserCount); 
 appointmentRouter.put("/:id", updateAppointment);
 

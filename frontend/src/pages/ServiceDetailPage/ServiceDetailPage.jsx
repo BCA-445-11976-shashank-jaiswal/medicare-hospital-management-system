@@ -453,7 +453,7 @@ export default function ServiceDetail() {
                 type="text"
                 placeholder="Full Name *"
                 value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
+                onChange={(e) => setCustomerName(e.target.value.replace(/[^a-zA-Z\s]/g, ""))}
                 className={serviceDetailStyles.input}
               />
 

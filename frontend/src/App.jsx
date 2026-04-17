@@ -20,6 +20,9 @@ import EditProfile from "./pages/EditProfile/EditProfile";
 // Lucide icon
 import { CircleChevronUp } from "lucide-react";
 
+// Components
+import Chatbot from "./components/Chatbot/Chatbot";
+
 /* ================= Scroll To Top ================= */
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -60,6 +63,7 @@ const ScrollButton = () => {
   );
 };
 
+
 /* ================= Main App ================= */
 const App = () => {
   // Lock horizontal overflow globally
@@ -99,6 +103,7 @@ const App = () => {
         </Routes>
       </div>
 
+      <Chatbot />
       <ScrollButton />
     </>
   );

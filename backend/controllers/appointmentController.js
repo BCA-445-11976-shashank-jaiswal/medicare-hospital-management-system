@@ -5,6 +5,8 @@ import Doctor from "../models/Doctor.js";
 import dotenv from "dotenv";
 import { getAuth } from "@clerk/express";
 import { clerkClient } from "@clerk/clerk-sdk-node";
+import { sendAppointmentConfirmation } from "../utils/notificationHelper.js";
+import { generateAppointmentPDF } from "../utils/pdfHelper.js";
 
 dotenv.config();
 
@@ -78,6 +80,12 @@ export const createAppointment = async (req, res) => {
       return res.status(400).json({ success: false, message: "Required fields missing" });
     }
 
+    // ✅ Name Validation: Only alphabets and spaces
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!nameRegex.test(patientName)) {
+      return res.status(400).json({ success: false, message: "Patient name should only contain alphabets" });
+    }
+
     const numericFee = safeNumber(fee ?? fees ?? 0);
     if (numericFee === null) {
       return res.status(400).json({ success: false, message: "Invalid fee" });
@@ -122,6 +130,17 @@ export const createAppointment = async (req, res) => {
       createdBy: userId,
       owner: doctor.owner || MAJOR_ADMIN_ID,
     });
+
+    // Trigger Notification (Async, don't block)
+    sendAppointmentConfirmation({
+      patientName,
+      patientEmail: email,
+      patientPhone: mobile,
+      doctorName: doctor.name,
+      date,
+      time,
+      type: 'doctor'
+    }).catch(err => console.error("Notification trigger error:", err));
 
     return res.status(201).json({ success: true, appointment: created });
   } catch (err) {
@@ -193,5 +212,28 @@ export const getRegisteredUserCount = async (req, res) => {
     return res.json({ success: true, totalUsers });
   } catch (err) {
     return res.status(500).json({ success: false });
+  }
+};
+
+/* =========================================================
+   DOWNLOAD APPOINTMENT RECEIPT (PDF)
+   ========================================================= */
+export const downloadAppointmentReceipt = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const appointment = await Appointment.findById(id);
+
+    if (!appointment) {
+      return res.status(404).json({ success: false, message: "Appointment not found" });
+    }
+
+    const pdfBuffer = await generateAppointmentPDF(appointment);
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename=Appointment_Receipt_${id}.pdf`);
+    res.send(pdfBuffer);
+  } catch (err) {
+    console.error("PDF Download Error:", err);
+    res.status(500).json({ success: false, message: "Error generating receipt" });
   }
 };
